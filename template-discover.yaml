@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    MBR - Instance discover job
+    
+Globals:
+  Function:
+    Runtime: python3.6
+    Timeout: 10
+
+Resources:
+
+    MyDiscover:
+        Type: AWS::Serverless::Function
+        Properties:
+            CodeUri: MBR/build/
+            Handler: Instancediscover.handler
+            Runtime: python3.6
+
+            Events:
+                MyTimer:
+                    Type: Schedule
+                    Properties:
+                        Schedule: cron(30 12 * * * *)
+                        
+
+Outputs:
+    MyDiscover:
+      Description: "Function ARN"
+      Value: !GetAtt MyDiscover.Arn
