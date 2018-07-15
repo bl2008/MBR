@@ -13,7 +13,7 @@ Resources:
     MyDiscover:
         Type: AWS::Serverless::Function
         Properties:
-            CodeUri: MBR/build/
+            CodeUri: ./
             Handler: Instancediscover.handler
             Runtime: python3.6
 
