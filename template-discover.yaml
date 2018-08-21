@@ -16,12 +16,38 @@ Resources:
             CodeUri: ./
             Handler: Instancediscover.handler
             Runtime: python3.6
+            Policies:
+                - Version: '2012-10-17'
+                  Statement:
+                      - Effect: Allow
+                        Action:
+                            - 'ec2:DescribeInstances'
+                        Resource:
+                            - '*'
+                      - Effect: Allow
+                        Action:
+                            - 's3:ListAllMyBuckets'
+                            - 's3:GetBucketLocation'
+                        Resource:
+                            - '*'
+                      - Effect: Allow
+                        Action:
+                            - 's3:ListBucket'
+                        Resource:
+                            - 'arn:aws:s3:::bl2018backup'
+                      - Effect: Allow
+                        Action:
+                            - 's3:PutObject'
+                            - 's3:GetObject'
+                            - 's3:DeleteObject'
+                        Resource:
+                            - 'arn:aws:s3:::bl2018backup/*'
 
             Events:
                 MyTimer:
                     Type: Schedule
                     Properties:
-                        Schedule: cron(30 12 * * * *)
+                        Schedule: cron(55 03 * * ? *)
                         
 
 Outputs:
