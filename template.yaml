@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
-    MBR - Instance discover job
+    MBR - Instance backcup jobs
     
 Globals:
   Function:
@@ -10,20 +10,27 @@ Globals:
 
 Resources:
 
-    MyDiscover:
+    MyBackup:
         Type: AWS::Serverless::Function
         Properties:
             CodeUri: ./
-            Handler: Instancediscover.handler
+            Handler: mbr.handler
             Runtime: python3.6
+
             Policies:
                 - Version: '2012-10-17'
                   Statement:
                       - Effect: Allow
                         Action:
-                            - 'ec2:DescribeInstances'
+                            - 'ec2:Describe*'
+                            - 'ec2:DeleteSnapshot'
+                            - 'ec2:ModifySnapshotAttribute'
+                            - 'ec2:CreateTags'
+                            - 'ec2:ResetSnapshotAttribute'
+                            - 'ec2:CreateSnapshot'
                         Resource:
                             - '*'
+
                       - Effect: Allow
                         Action:
                             - 's3:ListAllMyBuckets'
@@ -47,10 +54,10 @@ Resources:
                 MyTimer:
                     Type: Schedule
                     Properties:
-                        Schedule: cron(55 03 * * ? *)
+                        Schedule: cron(55 10 * * ? *)
                         
 
 Outputs:
-    MyDiscover:
+    MyBackup:
       Description: "Function ARN"
-      Value: !GetAtt MyDiscover.Arn
+      Value: !GetAtt MyBackup.Arn

@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'MBR - Instance backcup jobs
+
+  '
+Globals:
+  Function:
+    Runtime: python3.6
+    Timeout: 10
+Outputs:
+  MyBackup:
+    Description: Function ARN
+    Value:
+      Fn::GetAtt:
+      - MyBackup
+      - Arn
+Resources:
+  MyBackup:
+    Properties:
+      CodeUri: s3://bl2018backup/219f7e53d0d1109756e0dd9d6210f244
+      Events:
+        MyTimer:
+          Properties:
+            Schedule: cron(55 10 * * ? *)
+          Type: Schedule
+      Handler: mbr.handler
+      Policies:
+      - Statement:
+        - Action:
+          - ec2:Describe*
+          - ec2:DeleteSnapshot
+          - ec2:ModifySnapshotAttribute
+          - ec2:CreateTags
+          - ec2:ResetSnapshotAttribute
+          - ec2:CreateSnapshot
+          Effect: Allow
+          Resource:
+          - '*'
+        - Action:
+          - s3:ListAllMyBuckets
+          - s3:GetBucketLocation
+          Effect: Allow
+          Resource:
+          - '*'
+        - Action:
+          - s3:ListBucket
+          Effect: Allow
+          Resource:
+          - arn:aws:s3:::bl2018backup
+        - Action:
+          - s3:PutObject
+          - s3:GetObject
+          - s3:DeleteObject
+          Effect: Allow
+          Resource:
+          - arn:aws:s3:::bl2018backup/*
+        Version: '2012-10-17'
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
