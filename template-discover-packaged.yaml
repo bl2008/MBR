@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'MBR - Instance discover job
+
+  '
+Globals:
+  Function:
+    Runtime: python3.6
+    Timeout: 10
+Outputs:
+  MyDiscover:
+    Description: Function ARN
+    Value:
+      Fn::GetAtt:
+      - MyDiscover
+      - Arn
+Resources:
+  MyDiscover:
+    Properties:
+      CodeUri: s3://bl2018backup/25ab69840544723a20168571d0c7819e
+      Events:
+        MyTimer:
+          Properties:
+            Schedule: cron(00 04 * * ? *)
+          Type: Schedule
+      Handler: Instancediscover.handler
+      Policies:
+      - Statement:
+        - Action:
+          - ec2:DescribeInstances
+          Effect: Allow
+          Resource:
+          - '*'
+        - Action:
+          - s3:ListAllMyBuckets
+          - s3:GetBucketLocation
+          Effect: Allow
+          Resource:
+          - '*'
+        - Action:
+          - s3:ListBucket
+          Effect: Allow
+          Resource:
+          - arn:aws:s3:::bl2018backup
+        - Action:
+          - s3:PutObject
+          - s3:GetObject
+          - s3:DeleteObject
+          Effect: Allow
+          Resource:
+          - arn:aws:s3:::bl2018backup/*
+        Version: '2012-10-17'
+      Runtime: python3.6
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
